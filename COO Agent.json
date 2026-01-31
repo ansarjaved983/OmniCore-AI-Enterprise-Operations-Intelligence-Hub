@@ -1,0 +1,2199 @@
+{
+  "name": "COO Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "859859df-0dca-4c67-9d11-02fa7cad3166",
+        "options": {}
+      },
+      "id": "d166f344-447e-4ece-ba1b-62ea7e70aa1c",
+      "name": "Incoming Message Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -208,
+        5136
+      ],
+      "webhookId": "859859df-0dca-4c67-9d11-02fa7cad3166"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "id": "0090a8d5-9742-4ed5-b1e2-1a2435b8e369",
+      "name": "Gmail Inbox Monitor",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -208,
+        5328
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9w51B3PjMp3xWzw7",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "appId": "895891243367634",
+        "fields": [
+          "*"
+        ],
+        "options": {}
+      },
+      "id": "5ac681bb-0358-4a7d-80bd-5452ad068b00",
+      "name": "Facebook/Instagram Monitor",
+      "type": "n8n-nodes-base.facebookTrigger",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        5520
+      ],
+      "webhookId": "e68349ed-083f-4277-8de1-c4db314221ae",
+      "credentials": {
+        "facebookGraphAppApi": {
+          "id": "o5xN4sg4YM6vq9qe",
+          "name": "Facebook Graph (App) account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "id": "3b74f524-4c4b-4673-ada7-428a0c343531",
+      "name": "WhatsApp Business Monitor",
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        5712
+      ],
+      "webhookId": "502ce8f9-18d2-48d6-96b3-ad7ccf4dcebf",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "zjn8QsUUE55U9bn7",
+          "name": "WhatsApp OAuth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 4
+      },
+      "id": "1988944f-f9ed-4023-8bae-646511cc00b2",
+      "name": "Consolidate All Channels",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        16,
+        5392
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "business_name",
+              "value": "Your E-commerce Business",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "support_email",
+              "value": "support@yourbusiness.com",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "brand_tone",
+              "value": "professional and empathetic",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "7f21352a-0648-4b82-b351-8d18c47f5604",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        5424
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8a8ea673-e1e3-4a28-9c0f-f3d02bae7b89",
+              "name": "=contact_key",
+              "value": "={{ $('WhatsApp Business Monitor').item.json.messages?.[0]?.from || \"unknown_user\"}}",
+              "type": "string"
+            },
+            {
+              "id": "535d350a-0888-4dcf-9080-678ac0eb7720",
+              "name": "=contact_type",
+              "value": "={{ $json.messages ? 'phone' : ($json.from_email ? 'email' : 'social') }}",
+              "type": "string"
+            },
+            {
+              "id": "a51a9565-80be-4173-93d1-23bbf396ee6a",
+              "name": "email",
+              "value": "={{ $json.from_email || $json.from?.value?.[0]?.address || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "188b2455-6eb8-442e-89f5-3a3749ab4d51",
+              "name": "content",
+              "value": "={{ $('WhatsApp Business Monitor').item.json.messages?.[0]?.text?.body || \"No Content\" }}",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "channel",
+              "value": "={{ $json.messages ? 'WhatsApp' : ($json.from_email ? 'Email' : 'Social') }}",
+              "type": "string"
+            },
+            {
+              "id": "id-6",
+              "name": "sender_email",
+              "value": "={{ $json.From || $json.from_email || $json.email || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "id-7",
+              "name": "sender_phone",
+              "value": "={{ $json.messages?.[0]?.from || $json.from_phone || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "id-8",
+              "name": "sender_id",
+              "value": "={{ $json.sender_id || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "id-9",
+              "name": "subject",
+              "value": "={{ $json.Subject || '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "36a63466-1397-4860-8293-ccd581ed8018",
+      "name": "Normalize Message Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        464,
+        5424
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e0f1ddd2-3427-4fbe-8ddf-2a00aa3753a8",
+              "leftValue": "={{ $json.content }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "name": "filter.operator.notEmpty"
+              }
+            },
+            {
+              "id": "b0bac1e8-3437-4f10-8532-367937201afa",
+              "leftValue": "unknown_user",
+              "rightValue": "={{ $json.contact_key }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "9ce59186-c276-4828-b549-0f453008e02e",
+      "name": "Filter Spam & Noise",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        688,
+        5424
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ 'Channel: ' + $('Normalize Message Data').item.json.channel + '\\nContent: ' + $('Normalize Message Data').item.json.content + '\\n\\nCustomer Profile:\\n' + JSON.stringify($('Merge Customer Data Paths').item.json) + '\\n\\nOrder History (Last 10):\\n' + JSON.stringify($('Fetch Order History (Supabase)').all().slice(0, 10)) + '\\n\\nAnalyze sentiment, assess VIP status (total_spend > $500), and classify per COO routing matrix. If total_spend > 500 AND sentiment Negative, set action_path=escalate. Return strict JSON.' }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are the Strategic COO & Operations Architect for a High-Scale E-commerce Brand. CRITICAL ROUTING MATRIX: 1) Analyze sentiment (Positive/Negative/Urgent) from message tone and keywords. 2) If total_spend > 500 AND sentiment = Negative, ALWAYS set action_path to 'escalate' with risk_score 9+. 3) VIP Detection: Check customer loyalty_tier and total_spend - if total_spend > 500, add +2 to risk_score. 4) ROUTING: sales (risk 1-3) = product inquiries, pricing | support (risk 1-5) = order tracking, returns | complaint (risk 6-8) = frustrated tone, delays | escalate (risk 9-10) = VIP complaints, legal threats, refund demands | noise = greetings. 5) Return STRICT JSON with: action_path, risk_score (1-10), sentiment (Positive/Negative/Urgent), standardized_intent, business_justification (detailed COO reasoning), suggested_reply_snippet, confidence (0.0-1.0)."
+        }
+      },
+      "id": "ec6e7ab0-4c83-4552-9dce-107d8c4a88b1",
+      "name": "AI Message Classifier & Triage",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        2096,
+        5424
+      ]
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"action_path\": \"sales\",\n\t\"risk_score\": 5,\n\t\"sentiment\": \"Positive\",\n\t\"standardized_intent\": \"Product inquiry\",\n\t\"business_justification\": \"Customer asking about product availability - standard sales flow\",\n\t\"suggested_reply_snippet\": \"Thank you for your interest! Let me help you with that.\",\n\t\"confidence\": 0.95\n}"
+      },
+      "id": "5a4443f3-6668-45a8-bfec-baa4337d91c6",
+      "name": "Structured Classification Output",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2032,
+        5648
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "d8a3ffac-29b3-4494-afa4-4574ca20809c",
+      "name": "OpenAI GPT-4 Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        2160,
+        5648
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "wIHel9dqlvgnYdQ9",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('AI Message Classifier & Triage').item.json.action_path }}",
+                    "rightValue": "sales",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "e42aa5c9-ee2b-46d2-a695-6e8aa0a75e99"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Sales / Pre-sale"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('AI Message Classifier & Triage').item.json.action_path }}",
+                    "rightValue": "support",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "1239bfda-a997-465a-878c-b1e374286f35"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Support"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('AI Message Classifier & Triage').item.json.action_path }}",
+                    "rightValue": "complaint",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "e497f333-15e4-4735-8e9a-12a79c0995f2"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Complaint / Risk"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('AI Message Classifier & Triage').item.json.action_path }}",
+                    "rightValue": "escalate",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "e002f5ca-0a89-4bdd-9d1d-e87d6b5fd995"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Urgent Escalation"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('AI Message Classifier & Triage').item.json.action_path }}",
+                    "rightValue": "noise",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "10ee8ab3-641d-44af-ac9d-8fb8f6b20477"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Noise / Non-actionable"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b9e63d93-9825-4afa-87f5-5bf4822b9547",
+      "name": "Route by Intent & Urgency",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        2784,
+        5024
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ 'Customer Intent: ' + $('AI Message Classifier & Triage').item.json.standardized_intent + '\\nOriginal Message: ' + $('Normalize Message Data').item.json.content + '\\nCustomer Profile: ' + JSON.stringify($('Merge Customer Data Paths').item.json) + '\\nOrder History: ' + JSON.stringify($('Fetch Order History (Supabase)').all().slice(0, 5)) + '\\nSuggested Reply: ' + $('AI Message Classifier & Triage').item.json.suggested_reply_snippet + '\\n\\nCreate a complete professional sales response. If customer has order history, reference their loyalty. Include specific order numbers if relevant.' }}",
+        "options": {
+          "systemMessage": "You are a Sales Assistant for an e-commerce business. Generate professional, friendly sales responses that are brand-aligned and address customer inquiries effectively."
+        }
+      },
+      "id": "5330ba37-8e39-4322-bd05-c403630b96ec",
+      "name": "Sales Response Generator",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        2720,
+        5648
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ 'Customer Intent: ' + $('AI Message Classifier & Triage').item.json.standardized_intent + '\\nOriginal Message: ' + $('Normalize Message Data').item.json.content + '\\nCustomer Profile: ' + JSON.stringify($('Merge Customer Data Paths').item.json) + '\\nOrder History: ' + JSON.stringify($('Fetch Order History (Supabase)').all().slice(0, 5)) + '\\nSuggested Reply: ' + $('AI Message Classifier & Triage').item.json.suggested_reply_snippet + '\\n\\nCreate empathetic support response. MUST reference specific order numbers from history if discussing orders. Acknowledge loyalty tier and purchase history.' }}",
+        "options": {
+          "systemMessage": "You are a Support Specialist for an e-commerce business. Generate helpful, empathetic support responses that resolve customer issues effectively."
+        }
+      },
+      "id": "2ff5d955-08e3-4fd2-aa8c-e8f1e20deed8",
+      "name": "Support Response Generator",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        2720,
+        6352
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Normalize Message Data').item.json.channel }}",
+                    "rightValue": "Email",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "6b66b594-098e-49bc-a366-599afeb2c16b"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Gmail"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Normalize Message Data').item.json.channel }}",
+                    "rightValue": "Social",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "2dcb01ab-cb1f-4891-8818-75b8b7426f15"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Facebook/Instagram"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Normalize Message Data').item.json.channel }}",
+                    "rightValue": "WhatsApp",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "a6739ebd-b3b5-4bef-932f-ddf195599b55"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "WhatsApp"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "b61121f8-be31-4051-a004-66ce4e24e325"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Other"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1aa1df09-21f7-4e1a-ab57-44f6217fc82e",
+      "name": "Route by Channel (Sales)",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        3296,
+        5696
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Normalize Message Data').item.json.channel }}",
+                    "rightValue": "Email",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Gmail"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Normalize Message Data').item.json.channel }}",
+                    "rightValue": "Social",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Facebook/Instagram"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Normalize Message Data').item.json.channel }}",
+                    "rightValue": "WhatsApp",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "WhatsApp"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Other"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "45543b1d-9033-4587-a1b0-dc99eb31a116",
+      "name": "Route by Channel (Support)",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        3296,
+        6368
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Normalize Message Data').item.json.sender_email }}",
+        "subject": "={{ 'Re: ' + $('Normalize Message Data').item.json.subject }}",
+        "message": "={{ $('Sales Response Generator').item.json.output }}",
+        "options": {}
+      },
+      "id": "5ad100eb-ffef-447f-8a15-dc61237233fd",
+      "name": "Send Email (Sales Auto)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        3520,
+        5520
+      ],
+      "webhookId": "9bf7634b-fe44-4bfd-960d-eb8d965a882f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9w51B3PjMp3xWzw7",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Normalize Message Data').item.json.sender_email }}",
+        "subject": "={{ 'Re: ' + $('Normalize Message Data').item.json.subject }}",
+        "message": "={{ $('Support Response Generator').item.json.output }}",
+        "options": {}
+      },
+      "id": "67fb106e-90c2-4e90-b4c7-d707e0b7237b",
+      "name": "Send Email (Support Auto)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        3520,
+        6144
+      ],
+      "webhookId": "87bfd6c3-ee74-4113-a5ad-c8b9320b1ffb",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9w51B3PjMp3xWzw7",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v18.0",
+        "node": "={{ $('Normalize Message Data').item.json.sender_id }}",
+        "edge": "messages",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "message",
+                "value": "={{ $('Sales Response Generator').item.json.output }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "ff50feac-d2a0-4c26-87bd-568f876a02e0",
+      "name": "Reply Facebook/Instagram (Sales)",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        3520,
+        5728
+      ],
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "SbAjHt82FsZWTSXP",
+          "name": "Facebook Graph account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v18.0",
+        "node": "={{ $('Normalize Message Data').item.json.sender_id }}",
+        "edge": "messages",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "message",
+                "value": "={{ $('Support Response Generator').item.json.output }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "2ec8495d-e374-4ab6-b288-9073abf5f08f",
+      "name": "Reply Facebook/Instagram (Support)",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        3520,
+        6400
+      ],
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "SbAjHt82FsZWTSXP",
+          "name": "Facebook Graph account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "YOUR_WHATSAPP_PHONE_NUMBER_ID",
+        "recipientPhoneNumber": "={{ $('Normalize Message Data').item.json.sender_phone }}",
+        "textBody": "={{ $('Support Response Generator').item.json.output }}",
+        "additionalFields": {}
+      },
+      "id": "18b27158-1484-4725-bb96-2e4d928b8710",
+      "name": "Reply WhatsApp (Support)",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        3520,
+        6592
+      ],
+      "webhookId": "b3228cd7-e254-47f9-8d94-a7e86a28b32e",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "nWOS72vIImTemua3",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "<__PLACEHOLDER_VALUE__Your Data Table ID__>"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ new Date().toISOString() }}",
+            "channel": "={{ $('Normalize Message Data').item.json.channel }}",
+            "action_type": "={{ $json.action_type || $json.escalation_type || 'message' }}",
+            "risk_score": "={{ $('AI Message Classifier & Triage').item.json.risk_score }}",
+            "customer": "={{ $('Normalize Message Data').item.json.contact_key }}",
+            "intent": "={{ $('AI Message Classifier & Triage').item.json.standardized_intent }}",
+            "status": "={{ $('AI Message Classifier & Triage').item.json.action_path }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "6176e8e3-656e-44df-9ba6-ff8997167dc3",
+      "name": "Business Intelligence Dashboard",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        4416,
+        5232
+      ]
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "id": "1409fc74-e053-4852-a549-ef0882d1ea52",
+      "name": "Consolidate All Actions1",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        4192,
+        5216
+      ]
+    },
+    {
+      "parameters": {
+        "sessionKey": "={{ $('Normalize Message Data').item.json.contact_key || 'default_session' }}",
+        "tableName": "session_history"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        2288,
+        5648
+      ],
+      "id": "7ecb7ae5-2206-4a90-ab02-3ed7d3782711",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "SmHtm25BKpekw2fm",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "customers",
+        "returnAll": true,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.contact_key }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        912,
+        5424
+      ],
+      "id": "acb91231-678d-4daa-b9ff-595abd7da330",
+      "name": "Fetch Customer Data (Supabase)",
+      "credentials": {
+        "supabaseApi": {
+          "id": "zSJppZtlNfBDpZH8",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "orders",
+        "returnAll": true,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "customer_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Merge Customer Data Paths').item.json.id || $('Normalize Message Data').item.json.contact_key }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1808,
+        5424
+      ],
+      "id": "95632889-77d2-4aec-bb56-09a661fb6e6a",
+      "name": "Fetch Order History (Supabase)",
+      "credentials": {
+        "supabaseApi": {
+          "id": "zSJppZtlNfBDpZH8",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "anasjaved375@gmail.com",
+        "subject": "={{ '🚨 ALERT: ' + $('AI Message Classifier & Triage').item.json.risk_score + '/10 Risk Detected - ' + $('AI Message Classifier & Triage').item.json.standardized_intent }}",
+        "message": "={{ '<h2>COO SYSTEM ALERT</h2><p><strong>Customer:</strong> ' + $('Normalize Message Data').item.json.contact_key + '</p><p><strong>Risk Level:</strong> ' + $('AI Message Classifier & Triage').item.json.risk_score + '</p><p><strong>Reason:</strong> ' + $('AI Message Classifier & Triage').item.json.business_justification + '</p><p><strong>Original Message:</strong></p><blockquote>' + $('Normalize Message Data').item.json.content + '</blockquote><p><strong>AI Suggested Response:</strong></p><blockquote>' + $('AI Message Classifier & Triage').item.json.suggested_reply_snippet + '</blockquote><p style=\"color:red;\"><strong>Action Required: Please review and reply manually via WhatsApp/Email.</strong></p>' }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        3296,
+        4816
+      ],
+      "id": "ae7e37a1-8cdf-4a05-8fe6-1fc0ee19650c",
+      "name": "Send a message",
+      "webhookId": "901b67df-721a-4dc5-ba9b-2606886f3d68",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9w51B3PjMp3xWzw7",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "914931821713113",
+        "recipientPhoneNumber": "03215124574",
+        "textBody": "=🚨 ALERT: {{ $('AI Message Classifier & Triage').item.json.risk_score }}/10 Risk Detected - {{ $('AI Message Classifier & Triage').item.json.standardized_intent }}\n\nCOO SYSTEM ALERT\nCustomer: {{ $('Normalize Message Data').item.json.contact_key }}\nRisk Level: {{ $('AI Message Classifier & Triage').item.json.risk_score }}\nReason: {{ $('AI Message Classifier & Triage').item.json.business_justification }}\n\nOriginal Message:\n> \"{{ $('Normalize Message Data').item.json.content }}\"\n\nAI Suggested Response:\n> \"{{ $('AI Message Classifier & Triage').item.json.suggested_reply_snippet }}\"\n\nAction Required: Please review and reply manually via WhatsApp/Email.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        3296,
+        5104
+      ],
+      "id": "8ef9de35-13ae-4f12-b8b2-dadcb65d0bbe",
+      "name": "Urgent Escalation Alert1",
+      "webhookId": "5b5c57b7-60ed-4a99-8265-294cbfdcd2ed",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "nWOS72vIImTemua3",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "914931821713113",
+        "recipientPhoneNumber": "03215124574",
+        "textBody": "=🚨 ALERT: {{ $('AI Message Classifier & Triage').item.json.risk_score }}/10 Risk Detected - {{ $('AI Message Classifier & Triage').item.json.standardized_intent }}\n\nCOO SYSTEM ALERT\nCustomer: {{ $('Normalize Message Data').item.json.contact_key }}\nRisk Level: {{ $('AI Message Classifier & Triage').item.json.risk_score }}\nReason: {{ $('AI Message Classifier & Triage').item.json.business_justification }}\n\nOriginal Message:\n> \"{{ $('Normalize Message Data').item.json.content }}\"\n\nAI Suggested Response:\n> \"{{ $('AI Message Classifier & Triage').item.json.suggested_reply_snippet }}\"\n\nAction Required: Please review and reply manually via WhatsApp/Email.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        3072,
+        4896
+      ],
+      "id": "55e37306-914c-433c-9fcb-8be1cfd55cef",
+      "name": "Critical Alert - Complaint/Risk1",
+      "webhookId": "3b083f2d-eed5-4a8b-b0c7-2a0880b52246",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "nWOS72vIImTemua3",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "914931821713113",
+        "recipientPhoneNumber": "={{ $('Normalize Message Data').item.json.sender_phone }}",
+        "textBody": "={{ $('Sales Response Generator').item.json.output }}",
+        "additionalFields": {}
+      },
+      "id": "a795849a-e28d-4e53-a439-b2f4640c4649",
+      "name": "Reply WhatsApp (Sales)",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        3520,
+        5920
+      ],
+      "webhookId": "09146119-6059-49dd-814f-d2f5c1b8d4f4",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "nWOS72vIImTemua3",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "interactions",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "timestamp",
+              "fieldValue": "={{ new Date().toISOString() }}"
+            },
+            {
+              "fieldId": "channel",
+              "fieldValue": "={{ $('Normalize Message Data').item.json.channel }}"
+            },
+            {
+              "fieldId": "customer_id",
+              "fieldValue": "={{ $('Normalize Message Data').item.json.contact_key }}"
+            },
+            {
+              "fieldId": "content",
+              "fieldValue": "={{ $('Normalize Message Data').item.json.content }}"
+            },
+            {
+              "fieldId": "action_type",
+              "fieldValue": "noise"
+            },
+            {
+              "fieldId": "risk_score",
+              "fieldValue": "={{ $('AI Message Classifier & Triage').item.json.risk_score }}"
+            },
+            {
+              "fieldId": "metadata",
+              "fieldValue": "={{ JSON.stringify({ original_webhook_data: $('Consolidate All Channels').item.json, classification: $('AI Message Classifier & Triage').item.json, action_path: 'noise' }) }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3968,
+        5248
+      ],
+      "id": "fe9eaf42-b2c9-4759-8cda-827ba4de172c",
+      "name": "Log to Supabase (Messages)",
+      "credentials": {
+        "supabaseApi": {
+          "id": "zSJppZtlNfBDpZH8",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "interactions",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "customer_id",
+              "fieldValue": "={{ $('Normalize Message Data').item.json.contact_key }}"
+            },
+            {
+              "fieldId": "channel",
+              "fieldValue": "={{ $('Normalize Message Data').item.json.channel }}"
+            },
+            {
+              "fieldId": "content",
+              "fieldValue": "={{ $('Normalize Message Data').item.json.content }}"
+            },
+            {
+              "fieldId": "sentiment",
+              "fieldValue": "={{ $('AI Message Classifier & Triage').item.json.sentiment || 'Neutral' }}"
+            },
+            {
+              "fieldId": "risk_score",
+              "fieldValue": "={{ $('AI Message Classifier & Triage').item.json.risk_score }}"
+            },
+            {
+              "fieldId": "intent",
+              "fieldValue": "={{ $('AI Message Classifier & Triage').item.json.standardized_intent }}"
+            },
+            {
+              "fieldId": "metadata",
+              "fieldValue": "={{ JSON.stringify({ original_webhook_data: $('Consolidate All Channels').item.json, ai_classification: $('AI Message Classifier & Triage').item.json, reply_sent: true, channel_response: $json }) }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3968,
+        6112
+      ],
+      "id": "9d4b1540-afe9-4ffb-a239-e880a9783c11",
+      "name": "Log to Supabase (Actions)",
+      "credentials": {
+        "supabaseApi": {
+          "id": "zSJppZtlNfBDpZH8",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "escalations",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "timestamp",
+              "fieldValue": "={{ new Date().toISOString() }}"
+            },
+            {
+              "fieldId": "channel",
+              "fieldValue": "={{ $('Normalize Message Data').item.json.channel }}"
+            },
+            {
+              "fieldId": "customer",
+              "fieldValue": "={{ $('Normalize Message Data').item.json.contact_key }}"
+            },
+            {
+              "fieldId": "risk_score",
+              "fieldValue": "={{ $('AI Message Classifier & Triage').item.json.risk_score }}"
+            },
+            {
+              "fieldId": "intent",
+              "fieldValue": "={{ $('AI Message Classifier & Triage').item.json.standardized_intent }}"
+            },
+            {
+              "fieldId": "escalation_type",
+              "fieldValue": "={{ $('AI Message Classifier & Triage').item.json.action_path }}"
+            },
+            {
+              "fieldId": "message_content",
+              "fieldValue": "={{ $('Normalize Message Data').item.json.content }}"
+            },
+            {
+              "fieldId": "metadata",
+              "fieldValue": "={{ JSON.stringify({ ai_classification: $('AI Message Classifier & Triage').item.json, original_data: $('Consolidate All Channels').item.json }) }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3520,
+        4992
+      ],
+      "id": "547662f4-d760-47e2-b442-004cd033ceb4",
+      "name": "onsLog to Supabase (Escalati)",
+      "credentials": {
+        "supabaseApi": {
+          "id": "zSJppZtlNfBDpZH8",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $('Fetch Customer Data (Supabase)').all().length }}",
+              "rightValue": "0",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "036835bb-eba7-49d1-ad05-fa7a450af993",
+      "name": "Check Customer Exists",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1136,
+        5424
+      ]
+    },
+    {
+      "parameters": {
+        "tableId": "customers",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "id",
+              "fieldValue": "={{ $('Normalize Message Data').item.json.contact_key }}"
+            },
+            {
+              "fieldId": "name",
+              "fieldValue": "Valued Customer"
+            },
+            {
+              "fieldId": "email",
+              "fieldValue": "={{ $('Normalize Message Data').item.json.email || '' }}"
+            },
+            {
+              "fieldId": "phone",
+              "fieldValue": "={{ $('Normalize Message Data').item.json.sender_phone || '' }}"
+            },
+            {
+              "fieldId": "source_channel",
+              "fieldValue": "={{ $('Normalize Message Data').item.json.channel }}"
+            },
+            {
+              "fieldId": "total_spend",
+              "fieldValue": "0.00"
+            },
+            {
+              "fieldId": "loyalty_tier",
+              "fieldValue": "Bronze"
+            }
+          ]
+        }
+      },
+      "id": "a573122b-4ef0-486d-9f34-f4ec052cdab5",
+      "name": "Insert New Customer",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        5344
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "zSJppZtlNfBDpZH8",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "ai_decisions",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "interaction_id",
+              "fieldValue": "={{ $('Normalize Message Data').item.json.contact_key + '_' + Date.now() }}"
+            },
+            {
+              "fieldId": "suggested_action",
+              "fieldValue": "={{ $('AI Message Classifier & Triage').item.json.action_path }}"
+            },
+            {
+              "fieldId": "business_justification",
+              "fieldValue": "={{ $('AI Message Classifier & Triage').item.json.business_justification }}"
+            },
+            {
+              "fieldId": "confidence_score",
+              "fieldValue": "={{ $('AI Message Classifier & Triage').item.json.confidence }}"
+            }
+          ]
+        }
+      },
+      "id": "8cd82114-1998-4325-87e7-bdfffa089399",
+      "name": "Log AI Decision to Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2496,
+        5616
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "zSJppZtlNfBDpZH8",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "interactions",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "customer_id",
+              "fieldValue": "={{ $('Normalize Message Data').item.json.contact_key }}"
+            },
+            {
+              "fieldId": "channel",
+              "fieldValue": "={{ $('Normalize Message Data').item.json.channel }}"
+            },
+            {
+              "fieldId": "content",
+              "fieldValue": "={{ $('Normalize Message Data').item.json.content }}"
+            },
+            {
+              "fieldId": "sentiment",
+              "fieldValue": "={{ $('AI Message Classifier & Triage').item.json.sentiment || 'Neutral' }}"
+            },
+            {
+              "fieldId": "risk_score",
+              "fieldValue": "={{ $('AI Message Classifier & Triage').item.json.risk_score }}"
+            },
+            {
+              "fieldId": "intent",
+              "fieldValue": "={{ $('AI Message Classifier & Triage').item.json.standardized_intent }}"
+            },
+            {
+              "fieldId": "metadata",
+              "fieldValue": "={{ JSON.stringify({ original_webhook_data: $('Consolidate All Channels').item.json, ai_response: $('Sales Response Generator').item.json.output, confidence: $('AI Message Classifier & Triage').item.json.confidence, action_path: 'sales' }) }}"
+            }
+          ]
+        }
+      },
+      "id": "847aa3b9-a80a-4858-8f66-9e71b424e92e",
+      "name": "Update Interaction Metadata (Sales)",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3744,
+        5440
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "zSJppZtlNfBDpZH8",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "interactions",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "customer_id",
+              "fieldValue": "={{ $('Normalize Message Data').item.json.contact_key }}"
+            },
+            {
+              "fieldId": "channel",
+              "fieldValue": "={{ $('Normalize Message Data').item.json.channel }}"
+            },
+            {
+              "fieldId": "content",
+              "fieldValue": "={{ $('Normalize Message Data').item.json.content }}"
+            },
+            {
+              "fieldId": "sentiment",
+              "fieldValue": "={{ $('AI Message Classifier & Triage').item.json.sentiment || 'Neutral' }}"
+            },
+            {
+              "fieldId": "risk_score",
+              "fieldValue": "={{ $('AI Message Classifier & Triage').item.json.risk_score }}"
+            },
+            {
+              "fieldId": "intent",
+              "fieldValue": "={{ $('AI Message Classifier & Triage').item.json.standardized_intent }}"
+            },
+            {
+              "fieldId": "metadata",
+              "fieldValue": "={{ JSON.stringify({ original_webhook_data: $('Consolidate All Channels').item.json, ai_response: $('Support Response Generator').item.json.output, confidence: $('AI Message Classifier & Triage').item.json.confidence, action_path: 'support' }) }}"
+            }
+          ]
+        }
+      },
+      "id": "83850fde-62da-44aa-8dc7-1a05f145e841",
+      "name": "Update Interaction Metadata (Support)",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3744,
+        6208
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "zSJppZtlNfBDpZH8",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "a77ac52f-c083-4f6d-b4d3-ff65c4b8f245",
+      "name": "Merge Customer Data Paths",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1584,
+        5424
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $('AI Message Classifier & Triage').item.json.confidence }}",
+              "rightValue": "0.85",
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "37a272d9-18a0-452b-a6a6-9f07beb02a35",
+      "name": "Check Sales Confidence >= 85%",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3072,
+        5648
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $('AI Message Classifier & Triage').item.json.confidence }}",
+              "rightValue": "0.85",
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "63ea55b2-ee9e-4963-ba1b-9799b38dd4af",
+      "name": "Check Support Confidence >= 85%",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3072,
+        6352
+      ]
+    },
+    {
+      "parameters": {
+        "tableId": "escalations",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "customer_id",
+              "fieldValue": "={{ $('Normalize Message Data').item.json.contact_key }}"
+            },
+            {
+              "fieldId": "reason",
+              "fieldValue": "={{ 'Low AI Confidence (' + ($('AI Message Classifier & Triage').item.json.confidence * 100).toFixed(1) + '%) - Sales Response requires human review' }}"
+            },
+            {
+              "fieldId": "priority",
+              "fieldValue": "Medium"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "Open"
+            }
+          ]
+        }
+      },
+      "id": "9dae88cc-acd9-424f-b0e5-0ff2e90d2108",
+      "name": "Create Escalation (Low Confidence Sales)",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3296,
+        5392
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "zSJppZtlNfBDpZH8",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "escalations",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "customer_id",
+              "fieldValue": "={{ $('Normalize Message Data').item.json.contact_key }}"
+            },
+            {
+              "fieldId": "reason",
+              "fieldValue": "={{ 'Low AI Confidence (' + ($('AI Message Classifier & Triage').item.json.confidence * 100).toFixed(1) + '%) - Support Response requires human review' }}"
+            },
+            {
+              "fieldId": "priority",
+              "fieldValue": "High"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "Open"
+            }
+          ]
+        }
+      },
+      "id": "7ed9c564-ba21-4dd9-9b09-35c37b119d5e",
+      "name": "Create Escalation (Low Confidence Support)",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3296,
+        6016
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "zSJppZtlNfBDpZH8",
+          "name": "Supabase account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Consolidate All Channels": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Normalize Message Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Message Data": {
+      "main": [
+        [
+          {
+            "node": "Filter Spam & Noise",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Classification Output": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Message Classifier & Triage",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI GPT-4 Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Message Classifier & Triage",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Sales Response Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Support Response Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Message Classifier & Triage": {
+      "main": [
+        [
+          {
+            "node": "Route by Intent & Urgency",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Log AI Decision to Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Intent & Urgency": {
+      "main": [
+        [],
+        [],
+        [
+          {
+            "node": "Critical Alert - Complaint/Risk1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Urgent Escalation Alert1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log to Supabase (Messages)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sales Response Generator": {
+      "main": [
+        [
+          {
+            "node": "Check Sales Confidence >= 85%",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Support Response Generator": {
+      "main": [
+        [
+          {
+            "node": "Check Support Confidence >= 85%",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Channel (Sales)": {
+      "main": [
+        [
+          {
+            "node": "Send Email (Sales Auto)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Facebook/Instagram (Sales)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply WhatsApp (Sales)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Channel (Support)": {
+      "main": [
+        [
+          {
+            "node": "Send Email (Support Auto)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Facebook/Instagram (Support)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply WhatsApp (Support)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email (Sales Auto)": {
+      "main": [
+        [
+          {
+            "node": "Log to Supabase (Actions)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update Interaction Metadata (Sales)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email (Support Auto)": {
+      "main": [
+        [
+          {
+            "node": "Log to Supabase (Actions)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update Interaction Metadata (Support)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply Facebook/Instagram (Sales)": {
+      "main": [
+        [
+          {
+            "node": "Log to Supabase (Actions)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update Interaction Metadata (Sales)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply Facebook/Instagram (Support)": {
+      "main": [
+        [
+          {
+            "node": "Log to Supabase (Actions)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update Interaction Metadata (Support)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply WhatsApp (Support)": {
+      "main": [
+        [
+          {
+            "node": "Log to Supabase (Actions)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update Interaction Metadata (Support)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Inbox Monitor": {
+      "main": [
+        [
+          {
+            "node": "Consolidate All Channels",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Facebook/Instagram Monitor": {
+      "main": [
+        [
+          {
+            "node": "Consolidate All Channels",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "WhatsApp Business Monitor": {
+      "main": [
+        [
+          {
+            "node": "Consolidate All Channels",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Incoming Message Webhook": {
+      "main": [
+        [
+          {
+            "node": "Consolidate All Channels",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Consolidate All Actions1": {
+      "main": [
+        [
+          {
+            "node": "Business Intelligence Dashboard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Sales Response Generator",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "AI Message Classifier & Triage",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "Support Response Generator",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "onsLog to Supabase (Escalati)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Urgent Escalation Alert1": {
+      "main": [
+        [
+          {
+            "node": "onsLog to Supabase (Escalati)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Critical Alert - Complaint/Risk1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "onsLog to Supabase (Escalati)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply WhatsApp (Sales)": {
+      "main": [
+        [
+          {
+            "node": "Log to Supabase (Actions)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update Interaction Metadata (Sales)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to Supabase (Messages)": {
+      "main": [
+        [
+          {
+            "node": "Consolidate All Actions1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to Supabase (Actions)": {
+      "main": [
+        [
+          {
+            "node": "Consolidate All Actions1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "onsLog to Supabase (Escalati)": {
+      "main": [
+        [
+          {
+            "node": "Consolidate All Actions1",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Filter Spam & Noise": {
+      "main": [
+        [
+          {
+            "node": "Fetch Customer Data (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Customer Data (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "Check Customer Exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Customer Exists": {
+      "main": [
+        [
+          {
+            "node": "Merge Customer Data Paths",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Insert New Customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert New Customer": {
+      "main": [
+        [
+          {
+            "node": "Merge Customer Data Paths",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Customer Data Paths": {
+      "main": [
+        [
+          {
+            "node": "Fetch Order History (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Order History (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "AI Message Classifier & Triage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log AI Decision to Supabase": {
+      "main": [
+        [
+          {
+            "node": "Route by Intent & Urgency",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Sales Response Generator",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Support Response Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Sales Confidence >= 85%": {
+      "main": [
+        [
+          {
+            "node": "Route by Channel (Sales)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Escalation (Low Confidence Sales)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Support Confidence >= 85%": {
+      "main": [
+        [
+          {
+            "node": "Route by Channel (Support)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Escalation (Low Confidence Support)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Escalation (Low Confidence Sales)": {
+      "main": [
+        [
+          {
+            "node": "onsLog to Supabase (Escalati)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Escalation (Low Confidence Support)": {
+      "main": [
+        [
+          {
+            "node": "onsLog to Supabase (Escalati)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Interaction Metadata (Sales)": {
+      "main": [
+        [
+          {
+            "node": "Log to Supabase (Actions)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Interaction Metadata (Support)": {
+      "main": [
+        [
+          {
+            "node": "Log to Supabase (Actions)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "61f59d27-4bdd-455b-acbe-505127237917",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "18562b727cdc9700435ceb4dbe5a8adcb704c7fbba91bd06d1deab825ddc293f"
+  },
+  "id": "Vs39Id7VqbZh5wZ9JMbwQ",
+  "tags": []
+}
